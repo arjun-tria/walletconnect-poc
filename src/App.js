@@ -15,6 +15,7 @@ function App() {
   const [proposer, setProposer] = useState(null);
   const [sessionDetails, setSessionDetails] = useState('');
   const [sessionRequest, setSessionRequest] = useState(null);
+  const [signature, setSignature] = useState('');
 
   useEffect(() => {
     async function init() {
@@ -73,6 +74,8 @@ function App() {
 
         const response = await executeFunction({ id, method: request.method, params: request.params });
 
+        setSignature(response.result);
+
         await web3wallet.respondSessionRequest({ topic, response });
       });
     }
@@ -105,8 +108,10 @@ function App() {
 
       <div style={formStyle}>
         <h2><strong>Session Details</strong></h2>
-        <textarea name="response" rows={5} cols={50} readOnly style={textAreaStyle} value={sessionDetails} placeholder='session details'></textarea>
+        <textarea name="response" rows={5} cols={50} readOnly value={sessionDetails} placeholder='session details'></textarea>
       </div></> : null}
+
+      <br />
 
       {sessionRequest ?
         <>
@@ -114,6 +119,14 @@ function App() {
             <h2><strong>Session Request</strong></h2>
             <p> <strong> Request Method: </strong> {sessionRequest.request.method} </p>
             <p> <strong> Request Params: </strong> {JSON.stringify(sessionRequest.request.params)} </p>
+          </div>
+        </> : null}
+
+        {signature ?
+        <>
+          <div style={formStyle}>
+            <h2><strong>Signature</strong></h2>
+            <p> {signature} </p>
           </div>
         </> : null}
     </>
@@ -140,10 +153,6 @@ const inputStyle = {
   height: '30px',
   width: '1200px',
   fontSize: '16px',
-};
-
-const textAreaStyle = {
-  margin: '10px'
 };
 
 export default App;
